@@ -1,7 +1,4 @@
-"""
-Dockerfile for Next-Generation Gold Trading Bot
-This Dockerfile sets up the environment for the trading bot to run on Fly.io
-"""
+
 
 FROM python:3.11-slim
 
