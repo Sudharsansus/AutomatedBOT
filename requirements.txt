@@ -23,7 +23,7 @@ requests==2.31.0
 aiohttp==3.9.1
 websockets==12.0
 python-dotenv==1.0.0
-MetaTrader5==5.0.5120
+MetaTrader5==5.0.47
 
 # Monitoring and metrics
 prometheus-client==0.19.0
