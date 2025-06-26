@@ -21,7 +21,7 @@ requests==2.28.2 # Compatible with Python 3.10
 aiohttp==3.8.6 # Compatible with Python 3.10
 websockets==10.4 # Compatible with Python 3.10
 python-dotenv==0.21.1 # Compatible with Python 3.10
-MetaTrader5==5.0.43 # Known to work with Python 3.10
+MetaTrader5==5.0.47 # Known to work with Python 3.10
 
 # Monitoring and metrics
 prometheus-client==0.16.0 # Compatible with Python 3.10
