@@ -59,7 +59,7 @@ VOLUME /data
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTE1 \
+    PYTHONDONTWRITEBYTECODE=1 \
     LOG_LEVEL=info
 
 # Expose port for health checks and metrics
