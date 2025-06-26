@@ -2,13 +2,18 @@ import MetaTrader5 as mt5
 import pandas as pd
 import time
 from datetime import datetime
+import os
 
 class MT5Integration:
-    def __init__(self, login, password, server):
-        self.login = login
-        self.password = password
-        self.server = server
+    def __init__(self):
+        # Read credentials from environment variables
+        self.login = int(os.environ.get("MT5_LOGIN")) # Convert to int as MT5 login is typically numeric
+        self.password = os.environ.get("MT5_PASSWORD")
+        self.server = os.environ.get("MT5_SERVER")
         self.connected = False
+
+        if not all([self.login, self.password, self.server]):
+            raise ValueError("MT5 credentials (MT5_LOGIN, MT5_PASSWORD, MT5_SERVER) must be set as environment variables.")
 
     def connect(self):
         if not mt5.initialize():
@@ -76,11 +81,11 @@ class MT5Integration:
             # Request the result as a dictionary and display it
             result_as_dict = result._asdict()
             for field in result_as_dict:
-                print("   {}": {}".format(field, result_as_dict[field]))
+                print(f"   {field}: {result_as_dict[field]}") # Corrected line
                 if field == "request":
                     request_as_dict = result_as_dict["request"]._asdict()
                     for field in request_as_dict:
-                        print("       {}": {}".format(field, request_as_dict[field]))
+                        print(f"       {field}: {request_as_dict[field]}") # Corrected line
             return None
         
         print(f"Order placed successfully: {result}")
@@ -128,11 +133,11 @@ class MT5Integration:
             print(f"Close order failed, retcode={result.retcode}")
             result_as_dict = result._asdict()
             for field in result_as_dict:
-                print("   {}": {}".format(field, result_as_dict[field]))
+                print(f"   {field}: {result_as_dict[field]}") # Corrected line
                 if field == "request":
                     request_as_dict = result_as_dict["request"]._asdict()
                     for field in request_as_dict:
-                        print("       {}": {}".format(field, request_as_dict[field]))
+                        print(f"       {field}: {request_as_dict[field]}") # Corrected line
             return None
         
         print(f"Position {position_ticket} closed successfully: {result}")
@@ -140,12 +145,8 @@ class MT5Integration:
 
 # Example Usage (for testing purposes, uncomment to run)
 # if __name__ == "__main__":
-#     # Replace with your MT5 account details (use a demo account for testing!)
-#     MT5_LOGIN = 12345678 # Your MT5 account login
-#     MT5_PASSWORD = "YourPassword" # Your MT5 account password
-#     MT5_SERVER = "Exness-Demo" # Your MT5 server name (e.g., Exness-Trial, Exness-Real)
-
-#     mt5_integration = MT5Integration(MT5_LOGIN, MT5_PASSWORD, MT5_SERVER)
+#     # No longer needs explicit login/password/server here
+#     mt5_integration = MT5Integration()
 
 #     if mt5_integration.connect():
 #         # Get account information
@@ -179,5 +180,3 @@ class MT5Integration:
 #         #         print(pos)
 
 #         mt5_integration.disconnect()
-
-
