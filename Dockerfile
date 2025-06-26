@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster # <--- CHANGE THIS LINE
+FROM python:3.10-slim-buster
 
 WORKDIR /app
 
