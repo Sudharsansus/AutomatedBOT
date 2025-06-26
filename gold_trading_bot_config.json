@@ -1,0 +1,65 @@
+{
+    "exness_web_username": "YOUR_EXNESS_WEB_USERNAME",
+    "exness_web_password": "YOUR_EXNESS_WEB_PASSWORD",
+    "data": {
+        "timeframes": {
+            "analysis": "H1",
+            "execution": "M15"
+        },
+        "sources": {
+            "price": true,
+            "news": true,
+            "alternative": false
+        }
+    },
+    "strategy": {
+        "risk_per_trade": 0.01,
+        "max_drawdown": 0.2,
+        "take_profit_atr_multiple": 3.0,
+        "stop_loss_atr_multiple": 1.5,
+        "max_open_positions": 1,
+        "max_daily_trades": 5
+    },
+    "news_analysis": {
+        "sentiment_threshold": 0.3,
+        "impact_levels": ["high", "medium"],
+        "lookback_hours": 24
+    },
+    "price_prediction": {
+        "confidence_threshold": 0.6,
+        "prediction_horizon": 12,
+        "feature_importance_threshold": 0.05
+    },
+    "validation": {
+        "initial_balance": 10000.0,
+        "backtest_years": 5,
+        "monte_carlo_iterations": 1000
+    },
+    "live_testing": {
+        "duration_days": 14,
+        "monitoring_interval_minutes": 15,
+        "performance_report_interval_hours": 24,
+        "risk_circuit_breakers": {
+            "daily_loss_percent": 3.0,
+            "weekly_loss_percent": 5.0,
+            "max_drawdown_percent": 10.0
+        }
+    },
+    "deployment": {
+        "cloud_provider": "google_cloud",
+        "instance_type": "n1-standard-2",
+        "region": "us-central1",
+        "redundancy": true,
+        "monitoring": {
+            "performance_metrics": true,
+            "system_metrics": true,
+            "alert_thresholds": {
+                "drawdown_percent": 8.0,
+                "cpu_percent": 80.0,
+                "memory_percent": 80.0
+            }
+        }
+    }
+}
+
+
