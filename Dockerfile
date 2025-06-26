@@ -11,6 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy requirements first for better caching
 COPY requirements.txt .
+
+# Upgrade pip before installing requirements
+RUN pip install --upgrade pip  # <--- ADD THIS LINE
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
