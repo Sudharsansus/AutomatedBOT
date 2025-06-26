@@ -1,4 +1,5 @@
 import asyncio
+import os
 from playwright.async_api import Playwright, async_playwright, expect
 import pandas as pd
 import time
@@ -14,7 +15,19 @@ class ExnessWebIntegration:
     async def connect(self):
         try:
             self.playwright = await async_playwright().start()
-            self.browser = await self.playwright.chromium.launch(headless=self.headless)
+            
+            # Explicitly set headless to True for server environments
+            # Add --no-sandbox argument for Docker environments
+            launch_options = {
+                "headless": True, # Always run headless in server environment
+                "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+            }
+            
+            # Remove DISPLAY environment variable if it exists, to prevent Playwright from trying to connect to an X server
+            if "DISPLAY" in os.environ:
+                del os.environ["DISPLAY"]
+
+            self.browser = await self.playwright.chromium.launch(**launch_options)
             self.page = await self.browser.new_page()
             print("Browser launched and page created.")
             return True
@@ -22,7 +35,7 @@ class ExnessWebIntegration:
             print(f"Error connecting to browser: {e}")
             return False
 
-    async def login(self, url="https://my.exness.com/webtrading/"):
+    async def login(self, url="https://my.exness.com/webtrading/" ):
         if not self.page:
             print("Browser not connected.")
             return False
@@ -31,13 +44,13 @@ class ExnessWebIntegration:
             print(f"Navigated to {url}")
 
             # Wait for the login elements to be visible
-            await self.page.fill('input[name="login"]', self.username)
-            await self.page.fill('input[name="password"]', self.password)
-            await self.page.click('button[type="submit"]')
+            await self.page.fill("input[name=\"login\"]", self.username)
+            await self.page.fill("input[name=\"password\"]", self.password)
+            await self.page.click("button[type=\"submit\"]")
 
             # Wait for navigation or a specific element on the dashboard
-            # This part might need adjustment based on Exness's actual login flow
-            await self.page.wait_for_url("https://my.exness.com/webtrading/trade") # Example URL after successful login
+            # This part might need adjustment based on Exness’s actual login flow
+            await self.page.wait_for_url("https://my.exness.com/webtrading/trade" ) # Example URL after successful login
             print("Logged in successfully.")
             return True
         except Exception as e:
@@ -58,7 +71,7 @@ class ExnessWebIntegration:
             print("Not connected to Exness web.")
             return None
         try:
-            # This is a placeholder. You'll need to inspect the actual page
+            # This is a placeholder. You\"ll need to inspect the actual page
             # to find the correct selectors for account balance, equity, etc.
             balance_element = await self.page.query_selector("div.balance-display span.value")
             if balance_element:
@@ -74,7 +87,7 @@ class ExnessWebIntegration:
 
     async def place_order(self, symbol, order_type, volume, price=None, stop_loss=None, take_profit=None):
         # This is a complex operation and will require detailed interaction with the trading form
-        # You'll need to identify elements for symbol, order type (buy/sell), volume, SL, TP, etc.
+        # You\"ll need to identify elements for symbol, order type (buy/sell), volume, SL, TP, etc.
         if not self.page:
             print("Not connected to Exness web.")
             return None
@@ -82,12 +95,12 @@ class ExnessWebIntegration:
             print(f"Attempting to place {order_type} order for {volume} of {symbol}")
             # Example: Click on a trade button, fill in form, submit
             # This is highly speculative and needs actual web page analysis
-            # await self.page.click(f'button[data-symbol="{symbol}"]')
-            # await self.page.click(f'button[data-type="{order_type}"]')
-            # await self.page.fill('input[name="volume"]', str(volume))
-            # if stop_loss: await self.page.fill('input[name="stop_loss"]', str(stop_loss))
-            # if take_profit: await self.page.fill('input[name="take_profit"]', str(take_profit))
-            # await self.page.click('button[type="submit-order"]')
+            # await self.page.click(f\"button[data-symbol=\"{symbol}\"]\")
+            # await self.page.click(f\"button[data-type=\"{order_type}\"]\")
+            # await self.page.fill(\"input[name=\"volume\"]\", str(volume))
+            # if stop_loss: await self.page.fill(\"input[name=\"stop_loss\"]\", str(stop_loss))
+            # if take_profit: await self.page.fill(\"input[name=\"take_profit\"]\", str(take_profit))
+            # await self.page.click(\"button[type=\"submit-order\"]\")
             print("Order placement logic needs to be implemented based on Exness web UI.")
             return {"status": "success", "message": "Order logic placeholder"}
         except Exception as e:
@@ -118,7 +131,7 @@ async def main():
     EXNESS_USERNAME = "your_exness_email_or_login"
     EXNESS_PASSWORD = "your_exness_password"
 
-    integration = ExnessWebIntegration(EXNESS_USERNAME, EXNESS_PASSWORD, headless=False) # Set headless=False to see the browser
+    integration = ExnessWebIntegration(EXNESS_USERNAME, EXNESS_PASSWORD, headless=True) # Set headless=True for server environments
 
     if await integration.connect():
         if await integration.login():
@@ -128,5 +141,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
