@@ -29,7 +29,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxfixes3 \
     libxkbcommon0 \
     libxrandr2 \
-    libxshmfence6 \
     libxss1 \
     libxtst6 \
     xdg-utils \
