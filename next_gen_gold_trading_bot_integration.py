@@ -35,23 +35,36 @@ class ExnessWebIntegration:
             print(f"Error connecting to browser: {e}")
             return False
 
-    async def login(self, url="https://my.exness.com/webtrading/" ):
+    async def login(self):
         if not self.page:
             print("Browser not connected.")
             return False
         try:
-            await self.page.goto(url)
-            print(f"Navigated to {url}")
+            # Step 1: Navigate to the general Exness login page
+            general_login_url = "https://my.exness.com/accounts/sign-in"
+            await self.page.goto(general_login_url, timeout=90000 ) 
+            print(f"Navigated to general login page: {general_login_url}")
 
-            # Wait for the login elements to be visible
-            await self.page.fill("input[name=\"login\"]", self.username)
-            await self.page.fill("input[name=\"password\"]", self.password)
-            await self.page.click("button[type=\"submit\"]")
+            # Wait for the login elements to be visible and fill them
+            await self.page.fill("input[type=\"email\"]", self.username)
+            await self.page.fill("input[type=\"password\"]", self.password)
+            
+            # Click the \'Continue\' button
+            await self.page.click("button:has-text(\"Continue\")")
 
-            # Wait for navigation or a specific element on the dashboard
-            # This part might need adjustment based on Exness’s actual login flow
-            await self.page.wait_for_url("https://my.exness.com/webtrading/trade" ) # Example URL after successful login
-            print("Logged in successfully.")
+            # Wait for navigation after login (e.g., to personal area or webtrading)
+            # This might be a redirect to the webtrading URL or another intermediate page
+            await self.page.wait_for_url("https://my.exness.com/**", timeout=60000 ) 
+            print("Login attempt completed on general login page.")
+
+            # Step 2: Navigate to the webtrading platform after successful login
+            webtrading_url = "https://my.exness.com/webtrading/"
+            await self.page.goto(webtrading_url, timeout=60000 )
+            print(f"Navigated to webtrading platform: {webtrading_url}")
+
+            # Final check for successful navigation to the trading interface
+            await self.page.wait_for_url("https://my.exness.com/webtrading/trade", timeout=60000 ) 
+            print("Logged in successfully and landed on trading interface.")
             return True
         except Exception as e:
             print(f"Error during login: {e}")
@@ -128,8 +141,12 @@ class ExnessWebIntegration:
 # Example Usage (for local testing)
 async def main():
     # Replace with your Exness web trading login details
-    EXNESS_USERNAME = "your_exness_email_or_login"
-    EXNESS_PASSWORD = "your_exness_password"
+    EXNESS_USERNAME = os.environ.get("sudharsan.e585@gmail.com")
+    EXNESS_PASSWORD = os.environ.get("Sudharsan@95")
+
+    if not EXNESS_USERNAME or not EXNESS_PASSWORD:
+        print("EXNESS_WEB_USERNAME and EXNESS_WEB_PASSWORD environment variables must be set.")
+        return
 
     integration = ExnessWebIntegration(EXNESS_USERNAME, EXNESS_PASSWORD, headless=True) # Set headless=True for server environments
 
