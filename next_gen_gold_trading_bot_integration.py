@@ -1,5 +1,6 @@
 import asyncio
 import os
+import json
 from playwright.async_api import Playwright, async_playwright, expect
 import pandas as pd
 import time
@@ -49,7 +50,7 @@ class ExnessWebIntegration:
             await self.page.fill("input[type=\"email\"]", self.username)
             await self.page.fill("input[type=\"password\"]", self.password)
             
-            # Click the \'Continue\' button
+            # Click the \"Continue\" button
             await self.page.click("button:has-text(\"Continue\")")
 
             # Wait for navigation after login (e.g., to personal area or webtrading)
@@ -140,12 +141,16 @@ class ExnessWebIntegration:
 
 # Example Usage (for local testing)
 async def main():
-    # Replace with your Exness web trading login details
-    EXNESS_USERNAME = os.environ.get("sudharsan.e585@gmail.com")
-    EXNESS_PASSWORD = os.environ.get("Sudharsan@95")
+    # Load credentials from config.json
+    config_path = os.path.join(os.path.dirname(__file__), 'gold_trading_bot_config.json')
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+
+    EXNESS_USERNAME = config.get("exness_web_username")
+    EXNESS_PASSWORD = config.get("exness_web_password")
 
     if not EXNESS_USERNAME or not EXNESS_PASSWORD:
-        print("EXNESS_WEB_USERNAME and EXNESS_WEB_PASSWORD environment variables must be set.")
+        print("Exness web username and password not found in gold_trading_bot_config.json.")
         return
 
     integration = ExnessWebIntegration(EXNESS_USERNAME, EXNESS_PASSWORD, headless=True) # Set headless=True for server environments
