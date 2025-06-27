@@ -1,68 +1,31 @@
-FROM python:3.11-slim-bullseye
+# Use a base image with Python and Playwright dependencies pre-installed
+# This image is maintained by Playwright and includes all necessary browser dependencies
+FROM mcr.microsoft.com/playwright/python:v1.44.0-jammy
 
+# Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies for Python and Playwright
-# Using the official Playwright recommended dependencies for Debian-based images
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    fonts-liberation \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libegl1 \
-    libgbm1 \
-    libglib2.0-0 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
-    libopengl0 \
-    libstdc++6 \
-    libwayland-client0 \
-    libwebkit2gtk-4.0-37 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxkbcommon0 \
-    libxrandr2 \
-    libxss1 \
-    libxtst6 \
-    xdg-utils \
-    xvfb \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set DISPLAY for Xvfb
-ENV DISPLAY=:99
-
-# Copy requirements first for better caching
+# Copy your requirements.txt file into the container
 COPY requirements.txt .
 
-# Upgrade pip before installing requirements
-RUN pip install --upgrade pip
-
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers
-RUN playwright install --with-deps chromium
-
-# Copy application code
+# Copy your bot\"s code and configuration into the container
 COPY . .
 
-# Create data directory for persistent storage
-RUN mkdir -p /data
-VOLUME /data
+# Create data directory for persistent storage (if needed, otherwise remove)
+# RUN mkdir -p /data
+# VOLUME /data
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     LOG_LEVEL=info
 
-# Expose port for health checks and metrics
-EXPOSE 8080
+# Expose port for health checks and metrics (if your app serves anything, otherwise remove)
+# EXPOSE 8080
 
-# Command to run the application
+# Command to run your bot when the container starts
+# This assumes your main script is next_gen_gold_trading_bot_integration.py
 CMD ["python", "next_gen_gold_trading_bot_integration.py"]
